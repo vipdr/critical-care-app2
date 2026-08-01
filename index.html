@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="مرور الرعاية الحرجة">
+<meta name="theme-color" content="#0F3B3A">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%230F3B3A'/%3E%3Ctext x='50' y='66' font-size='55' text-anchor='middle' fill='%23fff'%3E%2B%3C/text%3E%3C/svg%3E">
+<title>نظام تقارير مرور الرعاية الحرجة والعاجلة</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap');
+
+:root{
+  --navy:#0F3B3A;
+  --navy-dark:#0A2827;
+  --paper:#F6F4EC;
+  --paper-line:#E2DDCF;
+  --ink:#20302F;
+  --muted:#6E7A76;
+  --gold:#B9863E;
+  --gold-light:#E8D4AE;
+  --red:#C9382C;
+  --red-bg:#FBE7E5;
+  --orange:#D6842A;
+  --orange-bg:#FCEEDD;
+  --green:#3E8C5C;
+  --green-bg:#E6F2E9;
+  --white:#FFFFFF;
+  --radius:10px;
+  --shadow:0 2px 10px rgba(15,59,58,0.08);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:'Tajawal',Tahoma,Arial,sans-serif;
+  background:var(--paper);
+  color:var(--ink);
+  min-height:100vh;
+}
+button{font-family:inherit;cursor:pointer;}
+input,select,textarea{font-family:inherit;}
+
+/* ===== Layout ===== */
+#shell{display:flex;min-height:100vh;}
+#sidebar{
+  width:250px;flex:none;background:var(--navy);color:#fff;
+  display:flex;flex-direction:column;
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+}
+#sidebar .brand{
+  padding:20px 18px 14px;border-bottom:1px solid rgba(255,255,255,0.12);
+}
+#sidebar .brand .title{font-weight:900;font-size:15px;line-height:1.5;}
+#sidebar .brand .sub{font-weight:400;font-size:11px;color:var(--gold-light);margin-top:4px;}
+.ecg{width:100%;height:22px;margin-top:10px;opacity:.75;}
+#navlist{list-style:none;margin:0;padding:10px 10px 20px;flex:1;}
+#navlist li{margin-bottom:4px;}
+.navbtn{
+  display:flex;align-items:center;gap:10px;width:100%;
+  background:transparent;border:none;color:#DCE7E5;
+  padding:11px 12px;border-radius:8px;font-size:14px;font-weight:500;
+  text-align:right;transition:background .15s;
+}
+.navbtn:hover{background:rgba(255,255,255,0.08);}
+.navbtn.active{background:var(--gold);color:var(--navy-dark);font-weight:700;}
+.navbtn .ic{font-size:16px;width:20px;text-align:center;}
+.navgroup-label{font-size:11px;color:rgba(255,255,255,0.45);padding:14px 12px 4px;font-weight:700;letter-spacing:.5px;}
+.designer-credit{padding:12px 16px;border-top:1px solid rgba(255,255,255,0.12);font-size:11px;color:rgba(255,255,255,0.55);text-align:center;}
+
+#main{flex:1;min-width:0;padding:26px 30px 60px;}
+.pagehead{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
+.pagehead h1{font-size:20px;margin:0;font-weight:900;color:var(--navy);}
+.pagehead .desc{color:var(--muted);font-size:13px;margin-top:3px;}
+
+.card{
+  background:var(--white);border:1px solid var(--paper-line);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:18px 20px;margin-bottom:16px;
+}
+.card h2{font-size:15px;margin:0 0 12px;color:var(--navy);font-weight:700;
+  display:flex;align-items:center;gap:8px;}
+.card h2 .badge-count{background:var(--paper);color:var(--muted);font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500;}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+@media(max-width:800px){.grid2,.grid3{grid-template-columns:1fr;}}
+
+label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:500;}
+input[type=text],input[type=date],input[type=time],input[type=number],select,textarea{
+  width:100%;padding:9px 11px;border:1px solid var(--paper-line);border-radius:7px;
+  background:#FCFBF8;font-size:13.5px;color:var(--ink);
+}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--gold-light);border-color:var(--gold);}
+textarea{resize:vertical;min-height:60px;}
+.field{margin-bottom:12px;}
+
+.btn{
+  border:none;border-radius:8px;padding:9px 16px;font-size:13.5px;font-weight:700;
+  display:inline-flex;align-items:center;gap:6px;
+}
+.btn-primary{background:var(--navy);color:#fff;}
+.btn-primary:hover{background:var(--navy-dark);}
+.btn-gold{background:var(--gold);color:var(--navy-dark);}
+.btn-gold:hover{background:#a5762f;}
+.btn-outline{background:#fff;border:1px solid var(--paper-line);color:var(--ink);}
+.btn-outline:hover{background:var(--paper);}
+.btn-danger{background:var(--red-bg);color:var(--red);}
+.btn-danger:hover{background:#f6cfcb;}
+.btn-sm{padding:6px 11px;font-size:12px;}
+
+.checklist{display:flex;flex-direction:column;gap:9px;}
+.checkitem{display:flex;align-items:center;gap:9px;font-size:13.5px;background:#FCFBF8;
+  border:1px solid var(--paper-line);border-radius:7px;padding:9px 12px;}
+.checkitem input{width:auto;accent-color:var(--green);}
+
+.section-block{border:1px solid var(--paper-line);border-radius:var(--radius);margin-bottom:16px;overflow:hidden;}
+.section-block .sechead{background:var(--paper);padding:12px 16px;display:flex;align-items:center;justify-content:between;gap:10px;justify-content:space-between;}
+.section-block .sechead .stitle{font-weight:800;color:var(--navy);font-size:14.5px;display:flex;align-items:center;gap:8px;}
+.section-block .secbody{padding:16px;}
+
+table{width:100%;border-collapse:collapse;font-size:13px;}
+table th{background:var(--paper);color:var(--navy);font-weight:700;padding:8px;border:1px solid var(--paper-line);text-align:right;}
+table td{padding:6px;border:1px solid var(--paper-line);vertical-align:middle;}
+table td input,table td select,table td textarea{border:1px solid transparent;background:transparent;padding:6px;}
+table td input:focus,table td select:focus,table td textarea:focus{background:#fff;border-color:var(--gold-light);}
+
+.sev-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-left:5px;}
+.sev-critical{background:var(--red);}
+.sev-medium{background:var(--orange);}
+.sev-minor{background:var(--green);}
+
+.pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;}
+.pill-critical{background:var(--red-bg);color:var(--red);}
+.pill-medium{background:var(--orange-bg);color:var(--orange);}
+.pill-minor{background:var(--green-bg);color:var(--green);}
+
+.statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}
+@media(max-width:900px){.statgrid{grid-template-columns:repeat(2,1fr);}}
+.statcard{background:#fff;border:1px solid var(--paper-line);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);}
+.statcard .num{font-size:26px;font-weight:900;color:var(--navy);}
+.statcard .lbl{font-size:12px;color:var(--muted);margin-top:2px;}
+
+.toast{
+  position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
+  background:var(--navy);color:#fff;padding:11px 22px;border-radius:30px;
+  font-size:13.5px;font-weight:600;box-shadow:0 6px 18px rgba(0,0,0,.25);
+  z-index:999;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
+
+.rowline{display:flex;gap:8px;align-items:center;}
+.hint{font-size:11.5px;color:var(--muted);margin-top:4px;}
+
+.rlist-table th,.rlist-table td{text-align:right;}
+.rlist-table tr:hover{background:#FAF9F5;}
+.hospital-link{color:var(--navy);font-weight:700;text-decoration:underline;cursor:pointer;background:none;border:none;padding:0;font-size:13.5px;}
+
+.attach-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;}
+.attach-item{border:1px solid var(--paper-line);border-radius:8px;overflow:hidden;background:#fff;}
+.attach-item img{width:100%;height:100px;object-fit:cover;display:block;}
+.attach-item .cap{padding:6px 8px;font-size:11px;color:var(--muted);display:flex;justify-content:space-between;align-items:center;gap:6px;}
+
+.dropzone{border:2px dashed var(--paper-line);border-radius:10px;padding:26px;text-align:center;color:var(--muted);font-size:13px;background:#FCFBF8;}
+.dropzone.drag{border-color:var(--gold);background:var(--gold-light);}
+
+.empty{text-align:center;padding:40px 20px;color:var(--muted);}
+.empty .ic{font-size:34px;margin-bottom:8px;}
+
+/* === Print / official report preview === */
+.letterhead{background:var(--navy);color:#fff;padding:22px 26px;border-radius:var(--radius) var(--radius) 0 0;position:relative;overflow:hidden;}
+.letterhead:after{content:"";position:absolute;bottom:0;right:0;left:0;height:4px;background:linear-gradient(90deg,var(--gold),var(--gold-light),var(--gold));}
+.letterhead .l1{font-size:12.5px;color:var(--gold-light);font-weight:500;}
+.letterhead .l2{font-size:13.5px;font-weight:700;margin-top:3px;}
+.letterhead .l3{font-size:13.5px;font-weight:700;color:var(--gold-light);margin-top:1px;}
+.letterhead .title{font-size:16px;font-weight:900;margin-top:12px;border-top:1px solid rgba(255,255,255,.2);padding-top:10px;}
+
+.reportwrap{background:#fff;border:1px solid var(--paper-line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
+.reportbody{padding:22px 26px;}
+.reportbody h3{color:var(--navy);font-size:14.5px;border-right:4px solid var(--gold);padding-right:10px;margin:22px 0 10px;}
+.reportbody h3:first-child{margin-top:0;}
+.metabox{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border:1px solid var(--paper-line);border-radius:8px;overflow:hidden;margin-bottom:8px;}
+.metabox div{padding:9px 12px;border-left:1px solid var(--paper-line);border-bottom:1px solid var(--paper-line);font-size:12.5px;}
+.metabox div b{display:block;color:var(--muted);font-size:10.5px;font-weight:500;margin-bottom:2px;}
+
+.scorebar-wrap{background:var(--paper);border-radius:20px;height:10px;overflow:hidden;margin-top:6px;}
+.scorebar-fill{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--red),var(--orange),var(--green));}
+
+.trendchart{display:flex;align-items:flex-end;gap:10px;height:140px;padding:10px 6px 0;border-bottom:2px solid var(--paper-line);}
+.trendbar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;}
+.trendbar .bar{width:70%;border-radius:5px 5px 0 0;background:var(--navy);position:relative;min-height:4px;}
+.trendbar .val{font-size:11px;color:var(--navy);font-weight:800;margin-bottom:3px;}
+.trendbar .lbl{font-size:10px;color:var(--muted);margin-top:5px;text-align:center;}
+
+@media print{
+  #sidebar,.no-print{display:none !important;}
+  #main{padding:0;}
+  body{background:#fff;}
+  .card{box-shadow:none;border:none;padding:0;}
+  .reportwrap{box-shadow:none;border:none;}
+  .letterhead{border-radius:0;}
+  @page{size:A4;margin:14mm;}
+}
+</style>
+</head>
+<body>
+<div id="shell">
+  <nav id="sidebar">
+    <div class="brand">
+      <div class="title">إدارة الرعاية الحرجة والعاجلة</div>
+      <div class="sub">مديرية الشئون الصحية بالدقهلية</div>
+      <svg class="ecg" viewBox="0 0 200 22" preserveAspectRatio="none"><polyline points="0,11 30,11 38,3 46,19 54,11 70,11 78,11 86,-2 92,22 100,11 200,11" fill="none" stroke="#E8D4AE" stroke-width="1.6"/></svg>
+    </div>
+    <ul id="navlist"></ul>
+    <div class="designer-credit">تصميم وتطوير: مجدى محمد سعد</div>
+  </nav>
+  <main id="main"></main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================= STORAGE HELPERS (works fully offline) ============================= */
+// Uses the browser's own localStorage so the app works with zero internet connection
+// once the file is opened on the phone. Falls back to in-memory storage only if
+// localStorage is blocked by the current preview environment (e.g. inside Claude.ai chat).
+let memoryStore = {};
+function localStorageWorks(){
+  try{ const k='__cci_test__'; localStorage.setItem(k,'1'); localStorage.removeItem(k); return true; }
+  catch(e){ return false; }
+}
+const HAS_LS = localStorageWorks();
+async function sGet(key){
+  try{
+    if(HAS_LS){ const v = localStorage.getItem('cci_'+key); return v ? JSON.parse(v) : null; }
+    return memoryStore.hasOwnProperty(key) ? memoryStore[key] : null;
+  }catch(e){ return null; }
+}
+async function sSet(key,value){
+  try{
+    if(HAS_LS){ localStorage.setItem('cci_'+key, JSON.stringify(value)); }
+    else{ memoryStore[key]=value; }
+    return true;
+  }catch(e){ console.error('storage set error',e); return false; }
+}
+async function sDelete(key){
+  try{
+    if(HAS_LS){ localStorage.removeItem('cci_'+key); }
+    else{ delete memoryStore[key]; }
+    return true;
+  }catch(e){ return false; }
+}
+
+/* ============================= APP STATE ============================= */
+const NAV = [
+  {id:'dashboard', ic:'📊', label:'Dashboard'},
+  {id:'newreport', ic:'🏥', label:'تقرير جديد'},
+  {id:'preview', ic:'📋', label:'تنسيق التقرير'},
+  {id:'export', ic:'📄', label:'تصدير PDF'},
+  {id:'sec-er', ic:'🚑', label:'إضافة قسم الطوارئ'},
+  {id:'sec-icu', ic:'❤️', label:'إضافة قسم العناية'},
+  {id:'sec-or', ic:'🏥', label:'إضافة قسم العمليات'},
+  {id:'attachments', ic:'📎', label:'إدراج المرفقات'},
+  {id:'settings', ic:'⚙️', label:'الإعدادات'},
+];
+
+let state = {
+  view:'dashboard',
+  reportsIndex: [], // [{id,hospital,visitDate,visitType,score,decision,critical,medium,minor}]
+  currentReport: null,
+  settings: null,
+  compareHospital: null,
+};
+
+const DEFAULT_SETTINGS = {
+  line1:'مديرية الشئون الصحية بالدقهلية',
+  line2:'الإدارة العامة للطب العلاجي',
+  line3:'إدارة الرعاية الحرجة والعاجلة',
+  title:'نموذج المرور الميداني والتقرير التنفيذي لأقسام الرعاية الحرجة والعاجلة',
+  inspectorName:''
+};
+
+const ER_ITEMS = ['الغرفة مفعلة','رعايات مصر تعمل','Username & Password','الإنترنت والكمبيوتر','Crash Cart','الشيتات والسجلات'];
+const ICU_ITEMS = ['القوى البشرية','الأجهزة تعمل','الأدوية الحرجة','المستلزمات','السجلات'];
+const OR_ITEMS = ['غرفة العمليات تعمل','جهاز التخدير','جهاز الشفط','الأدوية والمستلزمات','السجلات'];
+
+function blankSection(items){
+  return { included:true, checks: items.map(()=>false), notes:'' };
+}
+const SERA_ITEMS = [
+  {key:'rabies', label:'مصل الكلب (مضاد السعار)'},
+  {key:'tatSurgical', label:'مصل التيتانوس الجراحي (TAT)'},
+  {key:'toxoid', label:'توكسيد التيتانوس (التطعيم)'},
+  {key:'snake', label:'مصل الثعبان'},
+  {key:'scorpion', label:'مصل العقرب'},
+];
+function newReportObj(){
+  const icu = blankSection(ICU_ITEMS); icu.occupancy = { total:'', occupied:'' };
+  const or = blankSection(OR_ITEMS); or.operations = []; or.postponed = [];
+  return {
+    id: 'r_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),
+    hospital:'', visitDate:'', visitTime:'', visitType:'أول',
+    inspectorName: (state.settings && state.settings.inspectorName)||'',
+    attendees:'',
+    sections:{ er: blankSection(ER_ITEMS), icu, or },
+    observations:[], faults:[],
+    shortages:{ medicines:'', supplies:'' },
+    receptionSera: { rabies:'', tatSurgical:'', toxoid:'', snake:'', scorpion:'' },
+    scoreOverride:null,
+    decision:'',
+    followUpDate:'',
+    signatureName:'',
+    prevFollowUps:[], // carried-forward unresolved items {section,note,severity,status}
+    attachments:[],
+    createdAt: Date.now(), updatedAt: Date.now()
+  };
+}
+
+function normalizeReport(rep){
+  if(!rep) return rep;
+  if(!rep.sections.icu.occupancy) rep.sections.icu.occupancy = { total:'', occupied:'' };
+  if(!rep.sections.or.operations) rep.sections.or.operations = [];
+  if(!rep.sections.or.postponed) rep.sections.or.postponed = [];
+  if(!rep.receptionSera) rep.receptionSera = { rabies:'', tatSurgical:'', toxoid:'', snake:'', scorpion:'' };
+  if(!rep.shortages) rep.shortages = { medicines:'', supplies:'' };
+  return rep;
+}
+
+/* ============================= SCORE / DECISION LOGIC ============================= */
+function countSeverity(report){
+  let c=0,m=0,n=0;
+  report.observations.forEach(o=>{ if(o.severity==='critical')c++; else if(o.severity==='medium')m++; else if(o.severity==='minor')n++; });
+  return {critical:c, medium:m, minor:n};
+}
+function suggestedScore(report){
+  const {critical,medium,minor} = countSeverity(report);
+  let s = 100 - critical*15 - medium*7 - minor*3;
+  return Math.max(0, Math.min(100, s));
+}
+function suggestedDecision(score){
+  if(score>=90) return 'ممتاز';
+  if(score>=75) return 'جيد جداً';
+  if(score>=60) return 'جيد';
+  if(score>=40) return 'يحتاج متابعة';
+  return 'يحتاج تدخل عاجل';
+}
+function decisionColor(decision){
+  if(decision==='ممتاز'||decision==='جيد جداً') return 'green';
+  if(decision==='جيد') return 'orange';
+  return 'red';
+}
+
+/* ============================= TOAST ============================= */
+let toastTimer=null;
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+/* ============================= INIT ============================= */
+async function init(){
+  state.settings = await sGet('app-settings') || {...DEFAULT_SETTINGS};
+  state.reportsIndex = await sGet('reports-index') || [];
+  renderSidebar();
+  navigate('dashboard');
+  if(!HAS_LS){
+    toast('⚠️ التخزين الدائم غير متاح في هذه المعاينة — حمّل الملف وافتحه من متصفح الموبايل مباشرة');
+  }
+}
+
+function renderSidebar(){
+  const ul = document.getElementById('navlist');
+  ul.innerHTML = NAV.map(n=>`
+    <li><button class="navbtn ${state.view===n.id?'active':''}" data-nav="${n.id}">
+      <span class="ic">${n.ic}</span><span>${n.label}</span>
+    </button></li>`).join('');
+  ul.querySelectorAll('[data-nav]').forEach(b=>{
+    b.addEventListener('click', ()=>navigate(b.dataset.nav));
+  });
+}
+
+async function navigate(id){
+  // section quick-add buttons don't change the page — they operate on the report form
+  if(id==='sec-er'||id==='sec-icu'||id==='sec-or'){
+    const map={'sec-er':'er','sec-icu':'icu','sec-or':'or'};
+    if(!state.currentReport) state.currentReport = newReportObj();
+    state.currentReport.sections[map[id]].included = true;
+    state.view='newreport';
+    renderSidebar();
+    await renderMain();
+    setTimeout(()=>{ const el=document.getElementById('block-'+map[id]); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); },80);
+    return;
+  }
+  if(id==='export'){
+    state.view='preview';
+    renderSidebar();
+    await renderMain();
+    setTimeout(()=>window.print(), 300);
+    return;
+  }
+  state.view=id;
+  renderSidebar();
+  await renderMain();
+}
+
+async function renderMain(){
+  const main = document.getElementById('main');
+  if(state.view==='dashboard') return renderDashboard(main);
+  if(state.view==='newreport') return renderNewReport(main);
+  if(state.view==='preview') return renderPreview(main);
+  if(state.view==='attachments') return renderAttachments(main);
+  if(state.view==='settings') return renderSettings(main);
+}
+
+/* ============================= DASHBOARD ============================= */
+function renderDashboard(main){
+  const idx = state.reportsIndex.slice().sort((a,b)=>(b.visitDate||'').localeCompare(a.visitDate||''));
+  const total = idx.length;
+  const avgScore = total? Math.round(idx.reduce((s,r)=>s+(r.score||0),0)/total) : 0;
+  const urgent = idx.filter(r=>r.decision==='يحتاج تدخل عاجل').length;
+  const followUp = idx.filter(r=>r.decision==='يحتاج متابعة').length;
+  const hospitals = [...new Set(idx.map(r=>r.hospital).filter(Boolean))];
+
+  main.innerHTML = `
+    <div class="pagehead">
+      <div><h1>📊 لوحة المتابعة</h1><div class="desc">جميع زيارات المرور المسجّلة على المستشفيات</div></div>
+      <button class="btn btn-primary" id="btn-new-from-dash">+ تقرير جديد</button>
+    </div>
+
+    <div class="statgrid">
+      <div class="statcard"><div class="num">${total}</div><div class="lbl">إجمالي الزيارات</div></div>
+      <div class="statcard"><div class="num">${avgScore}</div><div class="lbl">متوسط درجة الالتزام</div></div>
+      <div class="statcard"><div class="num" style="color:var(--red)">${urgent}</div><div class="lbl">يحتاج تدخل عاجل</div></div>
+      <div class="statcard"><div class="num" style="color:var(--orange)">${followUp}</div><div class="lbl">يحتاج متابعة</div></div>
+    </div>
+
+    <div class="card">
+      <h2>🏥 مقارنة زيارات مستشفى <span class="badge-count">تتبّع التحسّن عبر الزيارات</span></h2>
+      <div class="field" style="max-width:340px">
+        <label>اختر المستشفى</label>
+        <select id="compare-select">
+          <option value="">— اختر —</option>
+          ${hospitals.map(h=>`<option value="${escAttr(h)}" ${state.compareHospital===h?'selected':''}>${escHtml(h)}</option>`).join('')}
+        </select>
+      </div>
+      <div id="compare-area"></div>
+    </div>
+
+    <div class="card">
+      <h2>سجل الزيارات <span class="badge-count">${total}</span></h2>
+      ${total===0 ? `<div class="empty"><div class="ic">🩺</div>لا توجد تقارير بعد — ابدأ بإنشاء تقرير جديد</div>` : `
+      <div style="overflow-x:auto">
+      <table class="rlist-table">
+        <thead><tr><th>المستشفى</th><th>التاريخ</th><th>النوع</th><th>الدرجة</th><th>الحالة</th><th>ملاحظات حرجة</th><th></th></tr></thead>
+        <tbody>
+        ${idx.map(r=>`
+          <tr>
+            <td><button class="hospital-link" data-open="${r.id}">${escHtml(r.hospital||'—')}</button></td>
+            <td>${r.visitDate||'—'}</td>
+            <td>${r.visitType||'—'}</td>
+            <td><b>${r.score}</b>/100</td>
+            <td><span class="pill pill-${decisionColor(r.decision)==='red'?'critical':decisionColor(r.decision)==='orange'?'medium':'minor'}">${r.decision||'—'}</span></td>
+            <td>${r.critical||0} 🔴 &nbsp; ${r.medium||0} 🟠 &nbsp; ${r.minor||0} 🟢</td>
+            <td><button class="btn btn-outline btn-sm" data-del="${r.id}">حذف</button></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+      </div>`}
+    </div>
+  `;
+  main.querySelector('#btn-new-from-dash').addEventListener('click', async ()=>{ state.currentReport=newReportObj(); navigate('newreport'); });
+  main.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click', async ()=>{
+    const rep = await sGet('report:'+b.dataset.open);
+    if(rep){ state.currentReport = normalizeReport(rep); navigate('newreport'); }
+  }));
+  main.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click', async ()=>{
+    if(!confirm('تأكيد حذف هذا التقرير نهائياً؟')) return;
+    await sDelete('report:'+b.dataset.del);
+    state.reportsIndex = state.reportsIndex.filter(r=>r.id!==b.dataset.del);
+    await sSet('reports-index', state.reportsIndex);
+    toast('تم حذف التقرير');
+    renderDashboard(main);
+  }));
+  const sel = main.querySelector('#compare-select');
+  sel.addEventListener('change', ()=>{ state.compareHospital = sel.value||null; renderCompareArea(); });
+  renderCompareArea();
+
+  function renderCompareArea(){
+    const area = main.querySelector('#compare-area');
+    if(!state.compareHospital){ area.innerHTML=''; return; }
+    const visits = idx.filter(r=>r.hospital===state.compareHospital).sort((a,b)=>(a.visitDate||'').localeCompare(b.visitDate||''));
+    if(visits.length===0){ area.innerHTML=`<div class="empty">لا توجد زيارات لهذا المستشفى</div>`; return; }
+    const max = Math.max(...visits.map(v=>v.score||0),1);
+    area.innerHTML = `
+      <div class="trendchart">
+        ${visits.map(v=>`
+          <div class="trendbar">
+            <div class="val">${v.score}</div>
+            <div class="bar" style="height:${Math.max(6,(v.score/100)*110)}px;background:${decisionColor(v.decision)==='red'?'var(--red)':decisionColor(v.decision)==='orange'?'var(--orange)':'var(--green)'}"></div>
+            <div class="lbl">${v.visitDate||'—'}<br>${v.visitType||''}</div>
+          </div>`).join('')}
+      </div>
+      <div style="overflow-x:auto;margin-top:14px">
+      <table class="rlist-table">
+        <thead><tr><th>التاريخ</th><th>النوع</th><th>الدرجة</th><th>حرجة</th><th>متوسطة</th><th>بسيطة</th><th>القرار</th></tr></thead>
+        <tbody>${visits.map(v=>`<tr><td>${v.visitDate||'—'}</td><td>${v.visitType||'—'}</td><td>${v.score}</td><td>${v.critical||0}</td><td>${v.medium||0}</td><td>${v.minor||0}</td><td>${v.decision||'—'}</td></tr>`).join('')}</tbody>
+      </table>
+      </div>
+      <div class="hint">📌 نصيحة: لو درجة الالتزام بتقل بين زيارتين متتاليتين رغم "متابعة" سابقة، ده مؤشر إن التوصيات مش بتتنفذ فعلياً — وده اللي بيستاهل تصعيد للإدارة العليا مش مجرد تكرار الملاحظة.</div>
+    `;
+  }
+}
+
+/* ============================= NEW REPORT (edit) ============================= */
+function ensureReport(){ if(!state.currentReport) state.currentReport = newReportObj(); return state.currentReport; }
+
+function renderNewReport(main){
+  const r = ensureReport();
+  const sc = countSeverity(r);
+  const sugScore = suggestedScore(r);
+  const finalScore = (r.scoreOverride!==null && r.scoreOverride!==undefined && r.scoreOverride!=='') ? Number(r.scoreOverride) : sugScore;
+  const sugDecision = suggestedDecision(finalScore);
+
+  main.innerHTML = `
+    <div class="pagehead">
+      <div><h1>🏥 تقرير جديد / تحرير تقرير</h1><div class="desc">إدارة الرعاية الحرجة والعاجلة — نموذج المرور الميداني</div></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-outline" id="btn-clear">تقرير فارغ</button>
+        <button class="btn btn-primary" id="btn-save">💾 حفظ التقرير</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>أولاً: بيانات المرور</h2>
+      <div class="grid3">
+        <div class="field"><label>المستشفى</label><input type="text" id="f-hospital" list="hosp-list" value="${escAttr(r.hospital)}"></div>
+        <div class="field"><label>تاريخ المرور</label><input type="date" id="f-date" value="${r.visitDate}"></div>
+        <div class="field"><label>وقت المرور</label><input type="time" id="f-time" value="${r.visitTime}"></div>
+      </div>
+      <div class="grid3">
+        <div class="field"><label>نوع المرور</label>
+          <select id="f-type">
+            ${['أول','متابعة','مفاجئ'].map(t=>`<option ${r.visitType===t?'selected':''}>${t}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field"><label>القائم بالمرور</label><input type="text" id="f-inspector" value="${escAttr(r.inspectorName)}"></div>
+        <div class="field"><label>الحضور من المستشفى</label><input type="text" id="f-attendees" value="${escAttr(r.attendees)}"></div>
+      </div>
+      <datalist id="hosp-list">${[...new Set(state.reportsIndex.map(x=>x.hospital).filter(Boolean))].map(h=>`<option value="${escAttr(h)}">`).join('')}</datalist>
+      <div id="followup-import"></div>
+    </div>
+
+    <h2 style="color:var(--navy);font-size:15px;margin:6px 2px">ثانياً: التقييم السريع بالأقسام</h2>
+    <div id="block-er" class="section-block">${sectionHTML('er','🚑 الطوارئ',ER_ITEMS,r.sections.er)}</div>
+    <div id="block-icu" class="section-block">${sectionHTML('icu','❤️ العناية المركزة',ICU_ITEMS,r.sections.icu)}</div>
+    <div id="block-or" class="section-block">${sectionHTML('or','🏥 العمليات',OR_ITEMS,r.sections.or)}</div>
+
+    <div class="card">
+      <h2>🧪 أرصدة أمصال الاستقبال</h2>
+      <div class="grid3">
+        ${SERA_ITEMS.map(s=>`
+          <div class="field">
+            <label>${s.label}</label>
+            <input type="number" min="0" class="sera-input" data-sera="${s.key}" value="${escAttr(r.receptionSera[s.key])}" placeholder="الرصيد">
+          </div>`).join('')}
+      </div>
+      <div class="hint">اترك الحقل فارغًا أو صفر لو الصنف غير متوفر — سيظهر في التقرير النهائي بلون تحذيري تلقائياً.</div>
+    </div>
+
+    <div class="card">
+      <h2>الملاحظات والإجراءات التصحيحية <span class="badge-count">${r.observations.length}</span></h2>
+      <div style="overflow-x:auto"><table id="obs-table">
+        <thead><tr><th>القسم</th><th>الملاحظة</th><th>الخطورة</th><th>الإجراء المطلوب</th><th>المسئول</th><th>المهلة</th><th></th></tr></thead>
+        <tbody id="obs-tbody">${obsRows(r.observations)}</tbody>
+      </table></div>
+      <button class="btn btn-outline btn-sm" id="btn-add-obs" style="margin-top:10px">+ إضافة ملاحظة</button>
+    </div>
+
+    <div class="card">
+      <h2>الأعطال الفنية <span class="badge-count">${r.faults.length}</span></h2>
+      <div style="overflow-x:auto"><table id="fault-table">
+        <thead><tr><th>الجهاز</th><th>القسم</th><th>وصف العطل</th><th>الإجراء</th><th></th></tr></thead>
+        <tbody id="fault-tbody">${faultRows(r.faults)}</tbody>
+      </table></div>
+      <button class="btn btn-outline btn-sm" id="btn-add-fault" style="margin-top:10px">+ إضافة عطل</button>
+    </div>
+
+    <div class="card">
+      <h2>النواقص</h2>
+      <div class="grid2">
+        <div class="field"><label>الأدوية (سطر لكل صنف)</label><textarea id="f-short-med">${escHtml(r.shortages.medicines)}</textarea></div>
+        <div class="field"><label>المستلزمات</label><textarea id="f-short-sup">${escHtml(r.shortages.supplies)}</textarea></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>ملخص نتائج المرور والقرار التنفيذي</h2>
+      <div class="grid3">
+        <div class="field"><label>🔴 ملاحظات حرجة (تلقائي)</label><input type="text" value="${sc.critical}" disabled></div>
+        <div class="field"><label>🟠 ملاحظات متوسطة (تلقائي)</label><input type="text" value="${sc.medium}" disabled></div>
+        <div class="field"><label>🟢 ملاحظات بسيطة (تلقائي)</label><input type="text" value="${sc.minor}" disabled></div>
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label>درجة الالتزام /100 (مقترحة تلقائياً: ${sugScore} — يمكن التعديل)</label>
+          <input type="number" min="0" max="100" id="f-score" value="${finalScore}">
+          <div class="scorebar-wrap"><div class="scorebar-fill" style="width:${finalScore}%"></div></div>
+        </div>
+        <div class="field">
+          <label>القرار التنفيذي (مقترح: ${sugDecision})</label>
+          <div class="checklist" id="decision-radios">
+            ${['ممتاز','جيد جداً','جيد','يحتاج متابعة','يحتاج تدخل عاجل'].map(d=>`
+              <label class="checkitem" style="cursor:pointer">
+                <input type="radio" name="decision" value="${d}" ${ (r.decision? r.decision===d : sugDecision===d) ?'checked':''}> ${d}
+              </label>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>موعد إعادة المرور</label><input type="date" id="f-followup-date" value="${r.followUpDate}"></div>
+        <div class="field"><label>اسم وتوقيع القائم بالمرور</label><input type="text" id="f-sig" value="${escAttr(r.signatureName)}"></div>
+      </div>
+    </div>
+  `;
+
+  // ---- events: header fields ----
+  const bind = (id, key, sub) => {
+    const el = main.querySelector('#'+id);
+    el.addEventListener('input', ()=>{ if(sub) r[sub][key]=el.value; else r[key]=el.value; renderFollowupBox(); });
+  };
+  bind('f-hospital','hospital'); bind('f-date','visitDate'); bind('f-time','visitTime');
+  bind('f-inspector','inspectorName'); bind('f-attendees','attendees');
+  main.querySelector('#f-type').addEventListener('change', e=>{ r.visitType=e.target.value; renderFollowupBox(); });
+  bind('f-short-med','medicines','shortages'); bind('f-short-sup','supplies','shortages');
+  main.querySelectorAll('.sera-input').forEach(inp=>inp.addEventListener('input', ()=>{ r.receptionSera[inp.dataset.sera]=inp.value; }));
+  main.querySelector('#f-score').addEventListener('input', e=>{ r.scoreOverride = e.target.value; refreshSummaryBars(); });
+  main.querySelectorAll('input[name=decision]').forEach(rd=>rd.addEventListener('change', ()=>{ r.decision = rd.value; }));
+  main.querySelector('#f-followup-date').addEventListener('input', e=> r.followUpDate = e.target.value);
+  main.querySelector('#f-sig').addEventListener('input', e=> r.signatureName = e.target.value);
+
+  main.querySelector('#btn-clear').addEventListener('click', ()=>{
+    if(!confirm('بدء تقرير جديد فارغ؟ سيتم فقد أي تعديلات غير محفوظة.')) return;
+    state.currentReport = newReportObj(); renderNewReport(main);
+  });
+  main.querySelector('#btn-save').addEventListener('click', ()=>saveCurrentReport());
+
+  // sections
+  ['er','icu','or'].forEach(key=>bindSection(key));
+  function bindSection(key){
+    const block = main.querySelector('#block-'+key);
+    block.querySelectorAll('.chk').forEach((c,i)=>c.addEventListener('change', ()=>{ r.sections[key].checks[i]=c.checked; }));
+    const notes = block.querySelector('.sec-notes');
+    if(notes) notes.addEventListener('input', ()=>{ r.sections[key].notes = notes.value; });
+    const rm = block.querySelector('.btn-remove-sec');
+    if(rm) rm.addEventListener('click', ()=>{ r.sections[key].included=false; renderNewReport(main); });
+
+    if(key==='icu' && r.sections.icu.included){
+      const t = block.querySelector('.occ-total'), o = block.querySelector('.occ-occupied');
+      if(t) t.addEventListener('input', ()=>{ r.sections.icu.occupancy.total = t.value; renderNewReport(main); });
+      if(o) o.addEventListener('input', ()=>{ r.sections.icu.occupancy.occupied = o.value; renderNewReport(main); });
+    }
+    if(key==='or' && r.sections.or.included){
+      bindOrOps(); bindOrPostponed();
+      block.querySelector('.btn-add-op').addEventListener('click', ()=>{
+        r.sections.or.operations.push({type:'',doctor:'',status:''});
+        block.querySelector('.or-ops-table tbody').innerHTML = orOpsRows(r.sections.or.operations);
+        bindOrOps();
+      });
+      block.querySelector('.btn-add-postponed').addEventListener('click', ()=>{
+        r.sections.or.postponed.push({type:'',reason:''});
+        block.querySelector('.or-postponed-table tbody').innerHTML = orPostponedRows(r.sections.or.postponed);
+        bindOrPostponed();
+      });
+    }
+    function bindOrOps(){
+      block.querySelectorAll('.or-ops-table tbody tr').forEach((tr,i)=>{
+        tr.querySelectorAll('[data-of]').forEach(inp=>inp.addEventListener('input', ()=>{ r.sections.or.operations[i][inp.dataset.of]=inp.value; }));
+        const del = tr.querySelector('.op-del');
+        if(del) del.addEventListener('click', ()=>{ r.sections.or.operations.splice(i,1); block.querySelector('.or-ops-table tbody').innerHTML = orOpsRows(r.sections.or.operations); bindOrOps(); });
+      });
+    }
+    function bindOrPostponed(){
+      block.querySelectorAll('.or-postponed-table tbody tr').forEach((tr,i)=>{
+        tr.querySelectorAll('[data-pf]').forEach(inp=>inp.addEventListener('input', ()=>{ r.sections.or.postponed[i][inp.dataset.pf]=inp.value; }));
+        const del = tr.querySelector('.pp-del');
+        if(del) del.addEventListener('click', ()=>{ r.sections.or.postponed.splice(i,1); block.querySelector('.or-postponed-table tbody').innerHTML = orPostponedRows(r.sections.or.postponed); bindOrPostponed(); });
+      });
+    }
+  }
+
+  // observations
+  main.querySelector('#btn-add-obs').addEventListener('click', ()=>{
+    r.observations.push({section:'',note:'',severity:'medium',action:'',responsible:'',deadline:''});
+    document.getElementById('obs-tbody').innerHTML = obsRows(r.observations);
+    bindObsRows();
+  });
+  bindObsRows();
+  function bindObsRows(){
+    const tbody = document.getElementById('obs-tbody');
+    tbody.querySelectorAll('tr').forEach((tr,i)=>{
+      tr.querySelectorAll('[data-f]').forEach(inp=>{
+        inp.addEventListener('input', ()=>{ r.observations[i][inp.dataset.f]=inp.value; if(inp.dataset.f==='severity'){} });
+        inp.addEventListener('change', ()=>{ r.observations[i][inp.dataset.f]=inp.value; if(inp.dataset.f==='severity') renderNewReport(main); });
+      });
+      const del = tr.querySelector('.row-del');
+      if(del) del.addEventListener('click', ()=>{ r.observations.splice(i,1); renderNewReport(main); });
+    });
+  }
+
+  // faults
+  main.querySelector('#btn-add-fault').addEventListener('click', ()=>{
+    r.faults.push({device:'',dept:'',desc:'',action:''});
+    document.getElementById('fault-tbody').innerHTML = faultRows(r.faults);
+    bindFaultRows();
+  });
+  bindFaultRows();
+  function bindFaultRows(){
+    const tbody = document.getElementById('fault-tbody');
+    tbody.querySelectorAll('tr').forEach((tr,i)=>{
+      tr.querySelectorAll('[data-f]').forEach(inp=>inp.addEventListener('input', ()=>{ r.faults[i][inp.dataset.f]=inp.value; }));
+      const del = tr.querySelector('.row-del');
+      if(del) del.addEventListener('click', ()=>{ r.faults.splice(i,1); document.getElementById('fault-tbody').innerHTML=faultRows(r.faults); bindFaultRows(); });
+    });
+  }
+
+  function refreshSummaryBars(){
+    const finalS = (r.scoreOverride!==null && r.scoreOverride!=='') ? Number(r.scoreOverride) : suggestedScore(r);
+    const bar = main.querySelector('.scorebar-fill'); if(bar) bar.style.width = finalS+'%';
+  }
+
+  renderFollowupBox();
+  function renderFollowupBox(){
+    const box = main.querySelector('#followup-import');
+    if(r.visitType!=='متابعة' || !r.hospital){ box.innerHTML=''; return; }
+    const prior = state.reportsIndex.filter(x=>x.hospital===r.hospital && x.id!==r.id).sort((a,b)=>(b.visitDate||'').localeCompare(a.visitDate||''));
+    if(prior.length===0){ box.innerHTML=`<div class="hint">لا توجد زيارة سابقة مسجّلة لهذا المستشفى.</div>`; return; }
+    box.innerHTML = `<div class="hint" style="margin-top:8px">📌 توجد زيارة سابقة بتاريخ ${prior[0].visitDate} (درجة ${prior[0].score}) —
+      <button class="btn btn-gold btn-sm" id="btn-import-prev" style="margin-right:6px">استيراد الملاحظات الحرجة/المتوسطة غير المنفذة</button></div>`;
+    box.querySelector('#btn-import-prev').addEventListener('click', async ()=>{
+      const prevReport = normalizeReport(await sGet('report:'+prior[0].id));
+      if(!prevReport){ toast('تعذر تحميل التقرير السابق'); return; }
+      const carry = prevReport.observations.filter(o=>o.severity==='critical'||o.severity==='medium');
+      if(carry.length===0){ toast('لا توجد ملاحظات حرجة أو متوسطة في الزيارة السابقة'); return; }
+      carry.forEach(o=> r.observations.push({...o}));
+      toast('تم استيراد '+carry.length+' ملاحظة — راجعها في جدول الملاحظات');
+      renderNewReport(main);
+    });
+  }
+}
+
+function sectionHTML(key,label,items,sec){
+  if(!sec.included){
+    return `<div class="sechead"><div class="stitle">${label} <span style="color:var(--muted);font-weight:400;font-size:12px">(غير مُدرَج لهذا المستشفى)</span></div></div>`;
+  }
+  let extra = '';
+  if(key==='icu'){
+    const total = Number(sec.occupancy.total)||0, occ = Number(sec.occupancy.occupied)||0;
+    const pct = total>0 ? Math.round((occ/total)*100) : 0;
+    extra = `
+      <div class="field" style="margin-top:10px"><label>إشغال العناية المركزة</label></div>
+      <div class="grid3">
+        <div class="field"><label>إجمالي أسرة العناية</label><input type="number" min="0" class="occ-total" value="${sec.occupancy.total}"></div>
+        <div class="field"><label>الأسرة المشغولة</label><input type="number" min="0" class="occ-occupied" value="${sec.occupancy.occupied}"></div>
+        <div class="field"><label>نسبة الإشغال</label><input type="text" value="${pct}%" disabled></div>
+      </div>`;
+  }
+  if(key==='or'){
+    extra = `
+      <div class="field" style="margin-top:10px"><label>قائمة العمليات المجراة</label></div>
+      <div style="overflow-x:auto"><table class="or-ops-table">
+        <thead><tr><th>نوع العملية</th><th>الجراح</th><th>الحالة</th><th></th></tr></thead>
+        <tbody>${orOpsRows(sec.operations)}</tbody>
+      </table></div>
+      <button class="btn btn-outline btn-sm btn-add-op" style="margin:8px 0 16px">+ إضافة عملية</button>
+
+      <div class="field"><label>العمليات المؤجلة</label></div>
+      <div style="overflow-x:auto"><table class="or-postponed-table">
+        <thead><tr><th>نوع العملية</th><th>سبب التأجيل</th><th></th></tr></thead>
+        <tbody>${orPostponedRows(sec.postponed)}</tbody>
+      </table></div>
+      <button class="btn btn-outline btn-sm btn-add-postponed" style="margin-top:8px">+ إضافة عملية مؤجلة</button>`;
+  }
+  return `
+    <div class="sechead">
+      <div class="stitle">${label}</div>
+      <button class="btn btn-outline btn-sm btn-remove-sec">✕ لا ينطبق على هذا المستشفى</button>
+    </div>
+    <div class="secbody">
+      <div class="checklist">
+        ${items.map((it,i)=>`<label class="checkitem"><input type="checkbox" class="chk" ${sec.checks[i]?'checked':''}> ${it}</label>`).join('')}
+      </div>
+      ${extra}
+      <div class="field" style="margin-top:10px"><label>ملاحظات إضافية على القسم</label><textarea class="sec-notes">${escHtml(sec.notes||'')}</textarea></div>
+    </div>`;
+}
+function orOpsRows(ops){
+  if(!ops || ops.length===0) return `<tr><td colspan="4" style="text-align:center;color:var(--muted)">لا توجد عمليات مسجّلة</td></tr>`;
+  return ops.map((o,i)=>`
+    <tr>
+      <td><input type="text" data-of="type" value="${escAttr(o.type)}"></td>
+      <td><input type="text" data-of="doctor" value="${escAttr(o.doctor)}"></td>
+      <td><input type="text" data-of="status" value="${escAttr(o.status)}" placeholder="تمت / جارية"></td>
+      <td><button class="btn btn-danger btn-sm op-del">حذف</button></td>
+    </tr>`).join('');
+}
+function orPostponedRows(list){
+  if(!list || list.length===0) return `<tr><td colspan="3" style="text-align:center;color:var(--muted)">لا توجد عمليات مؤجلة</td></tr>`;
+  return list.map((o,i)=>`
+    <tr>
+      <td><input type="text" data-pf="type" value="${escAttr(o.type)}"></td>
+      <td><input type="text" data-pf="reason" value="${escAttr(o.reason)}"></td>
+      <td><button class="btn btn-danger btn-sm pp-del">حذف</button></td>
+    </tr>`).join('');
+}
+
+function obsRows(obs){
+  if(obs.length===0) return `<tr><td colspan="7" style="text-align:center;color:var(--muted)">لا توجد ملاحظات — اضغط "إضافة ملاحظة"</td></tr>`;
+  return obs.map((o,i)=>`
+    <tr>
+      <td><input type="text" data-f="section" value="${escAttr(o.section)}" placeholder="القسم"></td>
+      <td><input type="text" data-f="note" value="${escAttr(o.note)}" placeholder="الملاحظة"></td>
+      <td><select data-f="severity">
+        <option value="critical" ${o.severity==='critical'?'selected':''}>🔴 حرجة</option>
+        <option value="medium" ${o.severity==='medium'?'selected':''}>🟠 متوسطة</option>
+        <option value="minor" ${o.severity==='minor'?'selected':''}>🟢 بسيطة</option>
+      </select></td>
+      <td><input type="text" data-f="action" value="${escAttr(o.action)}" placeholder="الإجراء المطلوب"></td>
+      <td><input type="text" data-f="responsible" value="${escAttr(o.responsible)}" placeholder="المسئول"></td>
+      <td><input type="text" data-f="deadline" value="${escAttr(o.deadline)}" placeholder="المهلة"></td>
+      <td><button class="btn btn-danger btn-sm row-del">حذف</button></td>
+    </tr>`).join('');
+}
+function faultRows(faults){
+  if(faults.length===0) return `<tr><td colspan="5" style="text-align:center;color:var(--muted)">لا توجد أعطال مسجّلة</td></tr>`;
+  return faults.map((f,i)=>`
+    <tr>
+      <td><input type="text" data-f="device" value="${escAttr(f.device)}"></td>
+      <td><input type="text" data-f="dept" value="${escAttr(f.dept)}"></td>
+      <td><input type="text" data-f="desc" value="${escAttr(f.desc)}"></td>
+      <td><input type="text" data-f="action" value="${escAttr(f.action)}"></td>
+      <td><button class="btn btn-danger btn-sm row-del">حذف</button></td>
+    </tr>`).join('');
+}
+
+async function saveCurrentReport(){
+  const r = state.currentReport;
+  if(!r.hospital || !r.visitDate){ toast('من فضلك أدخل اسم المستشفى وتاريخ المرور على الأقل'); return; }
+  r.updatedAt = Date.now();
+  const sc = countSeverity(r);
+  const finalScore = (r.scoreOverride!==null && r.scoreOverride!=='') ? Number(r.scoreOverride) : suggestedScore(r);
+  if(!r.decision) r.decision = suggestedDecision(finalScore);
+  await sSet('report:'+r.id, r);
+  const idxEntry = { id:r.id, hospital:r.hospital, visitDate:r.visitDate, visitType:r.visitType, score:finalScore, decision:r.decision, critical:sc.critical, medium:sc.medium, minor:sc.minor };
+  const pos = state.reportsIndex.findIndex(x=>x.id===r.id);
+  if(pos>=0) state.reportsIndex[pos]=idxEntry; else state.reportsIndex.push(idxEntry);
+  await sSet('reports-index', state.reportsIndex);
+  toast('✅ تم حفظ التقرير بنجاح');
+}
+
+/* ============================= PREVIEW / PRINT ============================= */
+function renderPreview(main){
+  const r = ensureReport();
+  const s = state.settings;
+  const sc = countSeverity(r);
+  const finalScore = (r.scoreOverride!==null && r.scoreOverride!=='') ? Number(r.scoreOverride) : suggestedScore(r);
+  const decision = r.decision || suggestedDecision(finalScore);
+
+  main.innerHTML = `
+    <div class="pagehead no-print">
+      <div><h1>📋 تنسيق التقرير</h1><div class="desc">معاينة الشكل النهائي — جاهز للطباعة أو التصدير كـ PDF</div></div>
+      <button class="btn btn-gold" id="btn-print">🖨️ طباعة / تصدير PDF</button>
+    </div>
+    <div class="reportwrap">
+      <div class="letterhead">
+        <div class="l1">${escHtml(s.line1)}</div>
+        <div class="l2">${escHtml(s.line2)}</div>
+        <div class="l3">${escHtml(s.line3)}</div>
+        <div class="title">${escHtml(s.title)}</div>
+      </div>
+      <div class="reportbody">
+        <h3>أولاً: بيانات المرور</h3>
+        <div class="metabox">
+          <div><b>المستشفى</b>${escHtml(r.hospital)||'—'}</div>
+          <div><b>تاريخ المرور</b>${r.visitDate||'—'}</div>
+          <div><b>وقت المرور</b>${r.visitTime||'—'}</div>
+          <div><b>نوع المرور</b>${r.visitType||'—'}</div>
+          <div><b>القائم بالمرور</b>${escHtml(r.inspectorName)||'—'}</div>
+          <div><b>الحضور من المستشفى</b>${escHtml(r.attendees)||'—'}</div>
+        </div>
+
+        <h3>ثانياً: التقييم السريع</h3>
+        ${previewSection('🚑 الطوارئ',ER_ITEMS,r.sections.er)}
+        ${previewSection('❤️ العناية المركزة',ICU_ITEMS,r.sections.icu)}
+        ${previewSection('🏥 العمليات',OR_ITEMS,r.sections.or)}
+
+        <h3>الملاحظات والإجراءات التصحيحية</h3>
+        <table>
+          <thead><tr><th>م</th><th>القسم</th><th>الملاحظة</th><th>الخطورة</th><th>الإجراء المطلوب</th><th>المسئول</th><th>المهلة</th></tr></thead>
+          <tbody>
+          ${r.observations.length? r.observations.map((o,i)=>`
+            <tr><td>${i+1}</td><td>${escHtml(o.section)}</td><td>${escHtml(o.note)}</td>
+            <td><span class="pill pill-${o.severity}"><span class="sev-dot sev-${o.severity}"></span>${o.severity==='critical'?'حرجة':o.severity==='medium'?'متوسطة':'بسيطة'}</span></td>
+            <td>${escHtml(o.action)}</td><td>${escHtml(o.responsible)}</td><td>${escHtml(o.deadline)}</td></tr>`).join('')
+            : `<tr><td colspan="7" style="text-align:center;color:var(--muted)">لا توجد ملاحظات</td></tr>`}
+          </tbody>
+        </table>
+
+        ${r.prevFollowUps && r.prevFollowUps.length ? `
+        <h3>متابعة تنفيذ ملاحظات الزيارة السابقة</h3>
+        <table><thead><tr><th>القسم</th><th>الملاحظة</th><th>الخطورة</th></tr></thead>
+        <tbody>${r.prevFollowUps.map(o=>`<tr><td>${escHtml(o.section)}</td><td>${escHtml(o.note)}</td><td>${o.severity}</td></tr>`).join('')}</tbody></table>` : ''}
+
+        <h3>الأعطال الفنية</h3>
+        <table><thead><tr><th>الجهاز</th><th>القسم</th><th>وصف العطل</th><th>الإجراء</th></tr></thead>
+        <tbody>${r.faults.length? r.faults.map(f=>`<tr><td>${escHtml(f.device)}</td><td>${escHtml(f.dept)}</td><td>${escHtml(f.desc)}</td><td>${escHtml(f.action)}</td></tr>`).join('') : `<tr><td colspan="4" style="text-align:center;color:var(--muted)">لا توجد أعطال</td></tr>`}</tbody></table>
+
+        <h3>🧪 أرصدة أمصال الاستقبال</h3>
+        <table><thead><tr><th>الصنف</th><th>الرصيد</th><th>الحالة</th></tr></thead>
+        <tbody>${SERA_ITEMS.map(s=>{
+          const val = r.receptionSera[s.key]; const n = Number(val)||0;
+          const ok = val!=='' && n>0;
+          return `<tr><td>${s.label}</td><td>${val!==''?val:'—'}</td><td><span class="pill pill-${ok?'minor':'critical'}">${ok?'متوفر':'نفذ / غير متوفر'}</span></td></tr>`;
+        }).join('')}</tbody></table>
+
+        <h3>النواقص</h3>
+        <div class="grid2">
+          <div><b>الأدوية</b><p>${nl2br(escHtml(r.shortages.medicines))||'—'}</p></div>
+          <div><b>المستلزمات</b><p>${nl2br(escHtml(r.shortages.supplies))||'—'}</p></div>
+        </div>
+
+        <h3>ملخص نتائج المرور</h3>
+        <p>🔴 ملاحظات حرجة: ${sc.critical} &nbsp;&nbsp; 🟠 ملاحظات متوسطة: ${sc.medium} &nbsp;&nbsp; 🟢 ملاحظات بسيطة: ${sc.minor}</p>
+        <p><b>درجة الالتزام: ${finalScore}/100</b></p>
+        <div class="scorebar-wrap"><div class="scorebar-fill" style="width:${finalScore}%"></div></div>
+
+        <h3>القرار التنفيذي</h3>
+        <p>خلصت لجنة المرور إلى أن مستوى جاهزية أقسام الرعاية الحرجة والعاجلة بالمستشفى: <b>${decision}</b></p>
+        <p>وقد تم التنبيه على إدارة المستشفى بسرعة تنفيذ الإجراءات التصحيحية الموضحة أعلاه خلال المدد المحددة، ويوصى بإعادة المرور للتأكد من إزالة السلبيات.</p>
+        <p>موعد إعادة المرور: <b>${r.followUpDate||'—'}</b></p>
+
+        ${r.attachments && r.attachments.length ? `
+        <h3>المرفقات</h3>
+        <div class="attach-grid">${r.attachments.map(a=>`<div class="attach-item"><img src="${a.dataUrl}"><div class="cap">${escHtml(a.name)}</div></div>`).join('')}</div>` : ''}
+
+        <h3>التوقيعات</h3>
+        <div class="grid2">
+          <div><b>القائم بالمرور</b><p>الاسم: ${escHtml(r.signatureName||r.inspectorName)||'—'}<br>التوقيع: ..................................</p></div>
+        </div>
+        <p style="text-align:center;color:var(--muted);font-size:10.5px;margin-top:24px;border-top:1px solid var(--paper-line);padding-top:8px">تصميم وتطوير النظام: مجدى محمد سعد</p>
+      </div>
+    </div>
+  `;
+  main.querySelector('#btn-print').addEventListener('click', ()=>window.print());
+}
+function previewSection(label,items,sec){
+  if(!sec.included) return `<p><b>${label}:</b> <span style="color:var(--muted)">غير مُدرَج (لا ينطبق على هذا المستشفى)</span></p>`;
+  let extra = '';
+  if(sec.occupancy){
+    const total = Number(sec.occupancy.total)||0, occ = Number(sec.occupancy.occupied)||0;
+    const pct = total>0 ? Math.round((occ/total)*100) : 0;
+    extra = `<p>إشغال العناية: <b>${occ||0}</b> من <b>${total||0}</b> سرير (${pct}%)</p>`;
+  }
+  if(sec.operations){
+    extra += `<p style="margin-bottom:4px"><b>العمليات المجراة:</b></p>`;
+    extra += sec.operations.length ? `<table><thead><tr><th>نوع العملية</th><th>الجراح</th><th>الحالة</th></tr></thead><tbody>${sec.operations.map(o=>`<tr><td>${escHtml(o.type)}</td><td>${escHtml(o.doctor)}</td><td>${escHtml(o.status)}</td></tr>`).join('')}</tbody></table>` : `<p style="color:var(--muted);font-size:12.5px">لا توجد عمليات مسجّلة</p>`;
+    extra += `<p style="margin:10px 0 4px"><b>العمليات المؤجلة:</b></p>`;
+    extra += sec.postponed.length ? `<table><thead><tr><th>نوع العملية</th><th>سبب التأجيل</th></tr></thead><tbody>${sec.postponed.map(o=>`<tr><td>${escHtml(o.type)}</td><td>${escHtml(o.reason)}</td></tr>`).join('')}</tbody></table>` : `<p style="color:var(--muted);font-size:12.5px">لا توجد عمليات مؤجلة</p>`;
+  }
+  return `<p><b>${label}</b></p><ul style="margin:4px 0 10px;padding-inline-start:20px">
+    ${items.map((it,i)=>`<li>${sec.checks[i]?'✅':'❌'} ${it}</li>`).join('')}
+  </ul>${extra}${sec.notes?`<p style="color:var(--muted);font-size:12.5px">ملاحظات: ${escHtml(sec.notes)}</p>`:''}`;
+}
+
+/* ============================= ATTACHMENTS ============================= */
+function renderAttachments(main){
+  const r = ensureReport();
+  main.innerHTML = `
+    <div class="pagehead"><div><h1>📎 إدراج المرفقات</h1><div class="desc">صور توثيقية للتقرير الحالي: ${escHtml(r.hospital)||'(تقرير بدون اسم مستشفى بعد)'}</div></div></div>
+    <div class="card">
+      <div class="dropzone" id="dz">اسحب صورة أو أكتر هنا أو اضغط لاختيار عدة ملفات دفعة واحدة (سيتم ضغط الصور تلقائياً)<br><input type="file" id="file-input" accept="image/*" multiple style="display:none"></div>
+      <div class="hint">📌 استخدم المرفقات لتوثيق أدلة مهمة مباشرة (مثال: صورة توقيع مطعون في صحته، دواء منتهي الصلاحية، جهاز معطل) — الصورة أقوى من أي وصف كتابي عند التصعيد.</div>
+    </div>
+    <div class="card">
+      <h2>المرفقات الحالية <span class="badge-count">${r.attachments.length}</span></h2>
+      <div class="attach-grid" id="attach-grid">
+        ${r.attachments.length? r.attachments.map(a=>`
+          <div class="attach-item">
+            <img src="${a.dataUrl}">
+            <div class="cap"><span>${escHtml(a.name)}</span><button class="btn btn-danger btn-sm" data-del="${a.id}">✕</button></div>
+          </div>`).join('') : `<div class="empty" style="grid-column:1/-1"><div class="ic">📷</div>لا توجد مرفقات بعد</div>`}
+      </div>
+    </div>
+  `;
+  const dz = main.querySelector('#dz'); const fi = main.querySelector('#file-input');
+  dz.addEventListener('click', ()=>fi.click());
+  ['dragover','dragenter'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault(); dz.classList.add('drag');}));
+  ['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault(); dz.classList.remove('drag');}));
+  dz.addEventListener('drop', e=>{ if(e.dataTransfer.files.length) handleFiles(e.dataTransfer.files); });
+  fi.addEventListener('change', e=>{ if(e.target.files.length) handleFiles(e.target.files); });
+
+  function handleFiles(fileList){
+    const files = Array.from(fileList).filter(f=>f.type.startsWith('image/'));
+    if(files.length===0){ toast('الرجاء اختيار ملفات صور'); return; }
+    let done = 0;
+    files.forEach(file=>{
+      const reader = new FileReader();
+      reader.onload = ev=>{
+        const img = new Image();
+        img.onload = ()=>{
+          const maxW = 900;
+          const scale = Math.min(1, maxW/img.width);
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width*scale; canvas.height = img.height*scale;
+          canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+          const dataUrl = canvas.toDataURL('image/jpeg',0.72);
+          r.attachments.push({id:'a_'+Date.now()+'_'+Math.random().toString(36).slice(2,6), name:file.name, dataUrl});
+          done++;
+          if(done===files.length){ renderAttachments(main); toast(files.length>1 ? `تمت إضافة ${files.length} مرفقات` : 'تمت إضافة المرفق'); }
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+  main.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click', ()=>{
+    r.attachments = r.attachments.filter(a=>a.id!==b.dataset.del); renderAttachments(main);
+  }));
+}
+
+/* ============================= SETTINGS ============================= */
+function renderSettings(main){
+  const s = state.settings;
+  main.innerHTML = `
+    <div class="pagehead"><div><h1>⚙️ الإعدادات</h1><div class="desc">بيانات الترويسة الافتراضية لكل التقارير</div></div></div>
+    <div class="card">
+      <div class="field"><label>السطر الأول (المديرية)</label><input type="text" id="s1" value="${escAttr(s.line1)}"></div>
+      <div class="field"><label>السطر الثاني (الإدارة العامة)</label><input type="text" id="s2" value="${escAttr(s.line2)}"></div>
+      <div class="field"><label>السطر الثالث (الإدارة الفرعية)</label><input type="text" id="s3" value="${escAttr(s.line3)}"></div>
+      <div class="field"><label>عنوان النموذج</label><input type="text" id="s4" value="${escAttr(s.title)}"></div>
+      <div class="field"><label>اسم القائم بالمرور الافتراضي</label><input type="text" id="s5" value="${escAttr(s.inspectorName)}"></div>
+      <button class="btn btn-primary" id="btn-save-settings">💾 حفظ الإعدادات</button>
+    </div>
+    <div class="card">
+      <h2>💾 النسخ الاحتياطي</h2>
+      <p class="hint">التطبيق شغال بالكامل بدون إنترنت، والبيانات محفوظة داخل متصفح الموبايل نفسه فقط. لو غيّرت المتصفح أو مسحت بيانات المتصفح هتفقد التقارير — لذلك خُد نسخة احتياطية بشكل دوري.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-gold" id="btn-export-backup">⬇️ تصدير نسخة احتياطية (JSON)</button>
+        <button class="btn btn-outline" id="btn-import-backup">⬆️ استيراد نسخة احتياطية</button>
+        <input type="file" id="backup-file-input" accept=".json,application/json" style="display:none">
+      </div>
+    </div>
+    <div class="card">
+      <h2>⚠️ منطقة الخطر</h2>
+      <p class="hint">حذف كل التقارير المحفوظة نهائياً من هذا الجهاز. لا يمكن التراجع عن هذا الإجراء.</p>
+      <button class="btn btn-danger" id="btn-wipe">حذف جميع التقارير</button>
+    </div>
+  `;
+  main.querySelector('#btn-save-settings').addEventListener('click', async ()=>{
+    s.line1=main.querySelector('#s1').value; s.line2=main.querySelector('#s2').value;
+    s.line3=main.querySelector('#s3').value; s.title=main.querySelector('#s4').value;
+    s.inspectorName=main.querySelector('#s5').value;
+    await sSet('app-settings', s); toast('✅ تم حفظ الإعدادات');
+  });
+  main.querySelector('#btn-wipe').addEventListener('click', async ()=>{
+    if(!confirm('تأكيد حذف جميع التقارير نهائياً؟')) return;
+    for(const item of state.reportsIndex){ await sDelete('report:'+item.id); }
+    state.reportsIndex = []; await sSet('reports-index', []);
+    toast('تم حذف جميع التقارير'); navigate('dashboard');
+  });
+
+  main.querySelector('#btn-export-backup').addEventListener('click', async ()=>{
+    const backup = { exportedAt: new Date().toISOString(), settings: state.settings, reportsIndex: state.reportsIndex, reports: [] };
+    for(const item of state.reportsIndex){
+      const rep = await sGet('report:'+item.id);
+      if(rep) backup.reports.push(rep);
+    }
+    const blob = new Blob([JSON.stringify(backup,null,2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const stamp = new Date().toISOString().slice(0,10);
+    a.href = url; a.download = `نسخة-احتياطية-تقارير-الرعاية-الحرجة-${stamp}.json`;
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+    toast('✅ تم تنزيل النسخة الاحتياطية');
+  });
+
+  const backupInput = main.querySelector('#backup-file-input');
+  main.querySelector('#btn-import-backup').addEventListener('click', ()=>backupInput.click());
+  backupInput.addEventListener('change', e=>{
+    const file = e.target.files[0]; if(!file) return;
+    const reader = new FileReader();
+    reader.onload = async ev=>{
+      let data;
+      try{ data = JSON.parse(ev.target.result); }
+      catch(err){ toast('ملف النسخة الاحتياطية غير صالح'); return; }
+      if(!confirm('استيراد هذه النسخة سيدمج تقاريرها مع التقارير الحالية (وسيستبدل أي تقرير بنفس الرقم). متابعة؟')) return;
+      if(data.settings){ state.settings = data.settings; await sSet('app-settings', state.settings); }
+      if(Array.isArray(data.reports)){
+        for(const rep of data.reports){
+          await sSet('report:'+rep.id, normalizeReport(rep));
+          const pos = state.reportsIndex.findIndex(x=>x.id===rep.id);
+          const entry = data.reportsIndex ? data.reportsIndex.find(x=>x.id===rep.id) : null;
+          if(entry){ if(pos>=0) state.reportsIndex[pos]=entry; else state.reportsIndex.push(entry); }
+        }
+        await sSet('reports-index', state.reportsIndex);
+      }
+      toast('✅ تم استيراد النسخة الاحتياطية بنجاح');
+      navigate('dashboard');
+    };
+    reader.readAsText(file);
+  });
+}
+
+/* ============================= UTIL ============================= */
+function escHtml(str){ return (str||'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function escAttr(str){ return escHtml(str); }
+function nl2br(str){ return (str||'').replace(/\n/g,'<br>'); }
+
+init();
+</script>
+</body>
+</html>
