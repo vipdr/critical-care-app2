@@ -1,14 +1,14 @@
 {
-  "name": "2نظام مرور الرعاية الحرجة",
-  "short_name": "2الرعاية الحرجة",
-  "start_url": "start_url": "index.html",
+  "name": "نظام مرور الرعاية الحرجة 2",
+  "short_name": "الرعاية الحرجة 2",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#f3f4f6",
   "theme_color": "#1e293b",
   "icons": [
     {
-      "src": "icon-192.png",
-      "sizes": "192x192",
+      "src": "icon-128.png",
+      "sizes": "128x128",
       "type": "image/png"
     },
     {
