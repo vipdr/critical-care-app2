@@ -10,10 +10,6 @@
 <meta name="theme-color" content="#0F3B3A">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%230F3B3A'/%3E%3Ctext x='50' y='66' font-size='55' text-anchor='middle' fill='%23fff'%3E%2B%3C/text%3E%3C/svg%3E">
 <title>نظام تقارير مرور الرعاية الحرجة والعاجلة</title>
-
-<!-- مكتبة تحويل HTML إلى PDF -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap');
 
@@ -197,35 +193,6 @@ table td input:focus,table td select:focus,table td textarea:focus{background:#f
 .trendbar .val{font-size:11px;color:var(--navy);font-weight:800;margin-bottom:3px;}
 .trendbar .lbl{font-size:10px;color:var(--muted);margin-top:5px;text-align:center;}
 
-/* تعديلات حاسمة لملف الـ PDF */
-.pdf-export-mode {
-    width: 1024px !important; /* فرض عرض الكمبيوتر أثناء التصدير من الموبايل */
-    max-width: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    border: none !important;
-    box-shadow: none !important;
-}
-/* إجبار الجداول على الظهور بالكامل وإلغاء التمرير الأفقي وقت التصدير */
-.pdf-export-mode div {
-    overflow: visible !important;
-}
-.pdf-export-mode * {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-}
-.pdf-export-mode table, 
-.pdf-export-mode tr, 
-.pdf-export-mode td, 
-.pdf-export-mode th {
-    page-break-inside: avoid !important;
-}
-.pdf-export-mode .attach-item, 
-.pdf-export-mode h3, 
-.pdf-export-mode .metabox {
-    page-break-inside: avoid !important;
-}
-
 @media print{
   #sidebar,.no-print{display:none !important;}
   #main{padding:0;}
@@ -254,6 +221,9 @@ table td input:focus,table td select:focus,table td textarea:focus{background:#f
 
 <script>
 /* ============================= STORAGE HELPERS (works fully offline) ============================= */
+// Uses the browser's own localStorage so the app works with zero internet connection
+// once the file is opened on the phone. Falls back to in-memory storage only if
+// localStorage is blocked by the current preview environment (e.g. inside Claude.ai chat).
 let memoryStore = {};
 function localStorageWorks(){
   try{ const k='__cci_test__'; localStorage.setItem(k,'1'); localStorage.removeItem(k); return true; }
@@ -340,7 +310,7 @@ function newReportObj(){
     decision:'',
     followUpDate:'',
     signatureName:'',
-    prevFollowUps:[],
+    prevFollowUps:[], // carried-forward unresolved items {section,note,severity,status}
     attachments:[],
     createdAt: Date.now(), updatedAt: Date.now()
   };
@@ -412,6 +382,7 @@ function renderSidebar(){
 }
 
 async function navigate(id){
+  // section quick-add buttons don't change the page — they operate on the report form
   if(id==='sec-er'||id==='sec-icu'||id==='sec-or'){
     const map={'sec-er':'er','sec-icu':'icu','sec-or':'or'};
     if(!state.currentReport) state.currentReport = newReportObj();
@@ -426,7 +397,7 @@ async function navigate(id){
     state.view='preview';
     renderSidebar();
     await renderMain();
-    setTimeout(()=>exportToPDF(), 500); // تحديث: استدعاء التصدير كـ PDF بدلا من الطباعة العادية
+    setTimeout(()=>window.print(), 300);
     return;
   }
   state.view=id;
@@ -441,43 +412,6 @@ async function renderMain(){
   if(state.view==='preview') return renderPreview(main);
   if(state.view==='attachments') return renderAttachments(main);
   if(state.view==='settings') return renderSettings(main);
-}
-
-/* ============================= PDF EXPORT LOGIC ============================= */
-function exportToPDF() {
-  const element = document.querySelector('.reportwrap');
-  if (!element) {
-    toast('حدث خطأ: تعذر العثور على التقرير');
-    return;
-  }
-
-  // إضافة كلاس لفرض تنسيق وعرض الكمبيوتر قبل التصدير
-  element.classList.add('pdf-export-mode');
-  
-  toast('جارٍ تجهيز وتحميل ملف الـ PDF... الرجاء الانتظار');
-
-  const opt = {
-    margin:       [10, 10, 10, 10], 
-    filename:     `تقرير-مرور-${state.currentReport.hospital || 'بدون-اسم'}-${state.currentReport.visitDate || 'بدون-تاريخ'}.pdf`,
-    image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { 
-        scale: 2, 
-        useCORS: true, 
-        logging: false,
-        windowWidth: 1024 // السطر ده هو الحل السحري لمنع قص الجداول من الموبايل
-    },
-    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  };
-
-  html2pdf().set(opt).from(element).save().then(() => {
-    // إزالة الكلاس بعد اكتمال التصدير ليعود العرض لطبيعته
-    element.classList.remove('pdf-export-mode');
-    toast('✅ تم تنزيل ملف الـ PDF بنجاح');
-  }).catch(err => {
-    element.classList.remove('pdf-export-mode');
-    toast('❌ حدث خطأ أثناء التصدير');
-    console.error(err);
-  });
 }
 
 /* ============================= DASHBOARD ============================= */
@@ -691,6 +625,7 @@ function renderNewReport(main){
     </div>
   `;
 
+  // ---- events: header fields ----
   const bind = (id, key, sub) => {
     const el = main.querySelector('#'+id);
     el.addEventListener('input', ()=>{ if(sub) r[sub][key]=el.value; else r[key]=el.value; renderFollowupBox(); });
@@ -711,6 +646,7 @@ function renderNewReport(main){
   });
   main.querySelector('#btn-save').addEventListener('click', ()=>saveCurrentReport());
 
+  // sections
   ['er','icu','or'].forEach(key=>bindSection(key));
   function bindSection(key){
     const block = main.querySelector('#block-'+key);
@@ -754,6 +690,7 @@ function renderNewReport(main){
     }
   }
 
+  // observations
   main.querySelector('#btn-add-obs').addEventListener('click', ()=>{
     r.observations.push({section:'',note:'',severity:'medium',action:'',responsible:'',deadline:''});
     document.getElementById('obs-tbody').innerHTML = obsRows(r.observations);
@@ -764,7 +701,7 @@ function renderNewReport(main){
     const tbody = document.getElementById('obs-tbody');
     tbody.querySelectorAll('tr').forEach((tr,i)=>{
       tr.querySelectorAll('[data-f]').forEach(inp=>{
-        inp.addEventListener('input', ()=>{ r.observations[i][inp.dataset.f]=inp.value; });
+        inp.addEventListener('input', ()=>{ r.observations[i][inp.dataset.f]=inp.value; if(inp.dataset.f==='severity'){} });
         inp.addEventListener('change', ()=>{ r.observations[i][inp.dataset.f]=inp.value; if(inp.dataset.f==='severity') renderNewReport(main); });
       });
       const del = tr.querySelector('.row-del');
@@ -772,6 +709,7 @@ function renderNewReport(main){
     });
   }
 
+  // faults
   main.querySelector('#btn-add-fault').addEventListener('click', ()=>{
     r.faults.push({device:'',dept:'',desc:'',action:''});
     document.getElementById('fault-tbody').innerHTML = faultRows(r.faults);
@@ -932,9 +870,9 @@ function renderPreview(main){
   main.innerHTML = `
     <div class="pagehead no-print">
       <div><h1>📋 تنسيق التقرير</h1><div class="desc">معاينة الشكل النهائي — جاهز للطباعة أو التصدير كـ PDF</div></div>
-      <button class="btn btn-gold" id="btn-print">🖨️ تحميل كـ PDF</button>
+      <button class="btn btn-gold" id="btn-print">🖨️ طباعة / تصدير PDF</button>
     </div>
-    <div class="reportwrap" id="report-content">
+    <div class="reportwrap">
       <div class="letterhead">
         <div class="l1">${escHtml(s.line1)}</div>
         <div class="l2">${escHtml(s.line2)}</div>
@@ -1014,7 +952,7 @@ function renderPreview(main){
       </div>
     </div>
   `;
-  main.querySelector('#btn-print').addEventListener('click', ()=>exportToPDF());
+  main.querySelector('#btn-print').addEventListener('click', ()=>window.print());
 }
 function previewSection(label,items,sec){
   if(!sec.included) return `<p><b>${label}:</b> <span style="color:var(--muted)">غير مُدرَج (لا ينطبق على هذا المستشفى)</span></p>`;
