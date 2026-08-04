@@ -199,12 +199,16 @@ table td input:focus,table td select:focus,table td textarea:focus{background:#f
 
 /* تعديلات حاسمة لملف الـ PDF */
 .pdf-export-mode {
-    width: 800px !important; /* فرض عرض الكمبيوتر أثناء التصدير من الموبايل */
+    width: 1024px !important; /* فرض عرض الكمبيوتر أثناء التصدير من الموبايل */
     max-width: none !important;
     padding: 0 !important;
     margin: 0 !important;
     border: none !important;
     box-shadow: none !important;
+}
+/* إجبار الجداول على الظهور بالكامل وإلغاء التمرير الأفقي وقت التصدير */
+.pdf-export-mode div {
+    overflow: visible !important;
 }
 .pdf-export-mode * {
     -webkit-print-color-adjust: exact !important;
@@ -453,10 +457,15 @@ function exportToPDF() {
   toast('جارٍ تجهيز وتحميل ملف الـ PDF... الرجاء الانتظار');
 
   const opt = {
-    margin:       [10, 10, 10, 10], // هوامش الصفحة بالملي متر
+    margin:       [10, 10, 10, 10], 
     filename:     `تقرير-مرور-${state.currentReport.hospital || 'بدون-اسم'}-${state.currentReport.visitDate || 'بدون-تاريخ'}.pdf`,
     image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { scale: 2, useCORS: true, logging: false },
+    html2canvas:  { 
+        scale: 2, 
+        useCORS: true, 
+        logging: false,
+        windowWidth: 1024 // السطر ده هو الحل السحري لمنع قص الجداول من الموبايل
+    },
     jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
   };
 
